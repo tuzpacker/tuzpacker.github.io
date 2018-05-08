@@ -1,0 +1,797 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="pomolo 一些概念的介绍 gate服务器 客户的发包后最早接受到的服务器，不参与rpc调用。故可以不需要por字段，只保存前段的port，主要作用为对前段做负载均衡，分配客户的前往的connector服务器。分配策略为根据客户的的key坐hash实现负载均衡。  connector服务器 接受客户端的请求，主要为在客户端请求以及给客户端回复时的路由作用。  应用逻辑服务器/后端服务器 对实际的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pomolo 一些概念的介绍">
+<meta property="og:url" content="http://yoursite.com/2018/04/28/pomelo术语/index.html">
+<meta property="og:site_name" content="crazyFrog006Notes">
+<meta property="og:description" content="pomolo 一些概念的介绍 gate服务器 客户的发包后最早接受到的服务器，不参与rpc调用。故可以不需要por字段，只保存前段的port，主要作用为对前段做负载均衡，分配客户的前往的connector服务器。分配策略为根据客户的的key坐hash实现负载均衡。  connector服务器 接受客户端的请求，主要为在客户端请求以及给客户端回复时的路由作用。  应用逻辑服务器/后端服务器 对实际的">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-05-08T14:51:50.532Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="pomolo 一些概念的介绍">
+<meta name="twitter:description" content="pomolo 一些概念的介绍 gate服务器 客户的发包后最早接受到的服务器，不参与rpc调用。故可以不需要por字段，只保存前段的port，主要作用为对前段做负载均衡，分配客户的前往的connector服务器。分配策略为根据客户的的key坐hash实现负载均衡。  connector服务器 接受客户端的请求，主要为在客户端请求以及给客户端回复时的路由作用。  应用逻辑服务器/后端服务器 对实际的">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/28/pomelo术语/"/>
+
+
+
+
+
+  <title> pomolo 一些概念的介绍 | crazyFrog006Notes </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">crazyFrog006Notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">随便写写</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-board">
+          <a href="/board" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
+            
+            留言
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/28/pomelo术语/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="heyi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="crazyFrog006Notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                pomolo 一些概念的介绍
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-28T21:06:27+08:00">
+                2018-04-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/programming/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="pomolo-一些概念的介绍"><a href="#pomolo-一些概念的介绍" class="headerlink" title="pomolo 一些概念的介绍"></a>pomolo 一些概念的介绍</h3><ul>
+<li><p>gate服务器</p>
+<p>客户的发包后最早接受到的服务器，不参与<a href="file:///一些概念/rpc协议.md" target="_blank" rel="noopener">rpc调用</a>。故可以不需要por字段，只保存前段的port，主要作用为对前段做<strong><em>负载均衡</em></strong>，分配客户的前往的connector服务器。分配策略为根据客户的的key坐hash实现负载均衡。</p>
+</li>
+<li><p>connector服务器</p>
+<p>接受客户端的请求，主要为在客户端请求以及给客户端回复时的路由作用。</p>
+</li>
+<li><p>应用逻辑服务器/后端服务器</p>
+<p>对实际的应用逻辑进行处理，可能有多个，之间进行rpc调用。</p>
+</li>
+<li><p>master服务器</p>
+<p>主要为读取配置文件，启动配置服务器的集群以及服务器的管理</p>
+</li>
+<li><p>rpc调用种类</p>
+<ul>
+<li>后端服务器向前端服务器请求session</li>
+<li>后端服务器通过channel推送消息对前段发起rpc</li>
+<li>前端将用户请求给后端</li>
+</ul>
+</li>
+<li><p>router</p>
+<p>用来标示具体的服务或者客户端接受服务 的位置。如服务端发送chat.chatHandler.send,而客户端则为onxxx协议，客户端请求消息后到达服务器经过一个路由函数router将其送到对应的服务器。</p>
+</li>
+<li><p>Session</p>
+<p>一个Session时一个客户端连接的抽象，相当于一个服务器客户端之间的connection，有唯一id和socket，一旦建立连接即不可以随便修改。其中，有一个<strong><em>FrountendSession</em></strong>概念</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FrountendSession:</span><br><span class="line">在前段服务器中，它是一个傀儡，能够通过对setting字段进行设置，然后将设置的setting同步到原始的session中。同时，其还可以对session绑定的uid进行修改。但是它不可以修改只读字段</span><br></pre></td></tr></table></figure>
+<p>而SessionService维护所有原始的Session信息。BackendSession与FrountendSession类似，不过其针对的是后端的连接。</p>
+</li>
+<li><p>channel</p>
+<p>channel是玩家id的容器，主要用于需要广播推送消息的时候使用。可以把玩家加入一个channel中，当需要对channle推送消息时，channel内的都会收到。channel是属于单个服务器本地的，并不能与其他服务器共享。</p>
+</li>
+<li><p>pomolo的四种消息类型</p>
+<p>request、response、notify（客户端给服务器）、push（服务器给客户端）</p>
+</li>
+<li><p>filter</p>
+<p>有before和after，每类filter可以注册多个，所有客户端的请求都会经过filter区处理，afterfilter主要控制处理之后的数据是否合法</p>
+</li>
+<li><p>handler/error handler</p>
+<p>处理业务逻辑的地方，在before filter，after filter之间。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">handler.methodName = <span class="function"><span class="keyword">function</span>(<span class="params">msg, session, next</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>errorhander对流处理发生的异常进行集中的处理。</p>
+</li>
+<li><p>component</p>
+<p>pomelo中各个功能以组件模式构成</p>
+</li>
+<li><p>admin clinent,monitor,master</p>
+<p>monitor在各个应用服务器中，向master注册自己，上报服务器信息，同时接受master推送来的变化消息</p>
+<p>master负责收集整个服务器群的信息，有变化时推送到各个monitor，接受client发出的命令</p>
+<p>client独立运行进程，发起到master的连接，通过对master请求或命令来管理服务器群</p>
+</li>
+<li><p>admin module</p>
+<p>负责处理监控信息</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">---------------ending<i class="fa fa-paw"></i>thanks---------------</div>
+    
+</div>
+  
+</div>
+
+    <footer class="post-footer">
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/30/斯普特尼克恋人/" rel="next" title="斯普特尼克恋人">
+                <i class="fa fa-chevron-left"></i> 斯普特尼克恋人
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/28/rpc协议/" rel="prev" title="rpc(远程过程调用协议)">
+                rpc(远程过程调用协议) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="heyi" />
+          <p class="site-author-name" itemprop="name">heyi</p>
+           
+              <p class="site-description motion-element" itemprop="description">代码输入元</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/tuzpacker" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/tuzpacker" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2862119132" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/he-yi-99-37-55" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#pomolo-一些概念的介绍"><span class="nav-number">1.</span> <span class="nav-text">pomolo 一些概念的介绍</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">heyi</span>
+  <span id="busuanzi_container_site_uv">本站访客数<span id="busuanzi_value_site_uv"></span>人次
+</span>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
